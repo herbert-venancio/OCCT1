@@ -1,0 +1,3 @@
+Bundle-Name: Sample Functional Tests
+Bundle-SymbolicName: com.sample.functional
+Bundle-Version: 1.0.0

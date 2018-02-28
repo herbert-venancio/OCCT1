@@ -1,0 +1,63 @@
+plugins {
+	id "de.undercouch.download" version "3.1.2"
+}
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+apply plugin: 'eclipse'
+
+sourceCompatibility = "1.8"
+targetCompatibility = "1.8"
+
+ext {
+	powerMockVersion = "1.7.3"
+	seleniumVersion = '3.3.1'
+	frwSeleniumCommonsVersion = '2.2.0'
+}
+
+configure(subprojects.findAll { !it.subprojects }) {
+	afterEvaluate { subproject ->
+
+		compileJava {
+			dependsOn "formatSource"
+			options.encoding = "UTF-8"
+		}
+
+		dependencies {
+			compile group: "org.json", name: "org.json", version: "2.0"
+	
+			compile 'com.liferay.gs:frw-selenium-commons:' + frwSeleniumCommonsVersion
+		
+			compile 'org.seleniumhq.selenium:selenium-api:' + seleniumVersion
+			compile 'org.seleniumhq.selenium:selenium-java:' + seleniumVersion
+			compile 'org.seleniumhq.selenium:selenium-remote-driver:' + seleniumVersion
+			compile 'org.seleniumhq.selenium:selenium-support:' + seleniumVersion
+			
+			testCompile group: "junit", name: "junit", version: "4.12"
+			testCompile group: "org.powermock", name: "powermock-api-mockito2", version: powerMockVersion
+			testCompile group: 'org.hamcrest', name: 'java-hamcrest', version: '2.0.0.0'
+		}
+
+		deploy {
+			exclude "**/*source.formatter*.jar"
+			enabled = false
+		}
+
+		test {
+			testLogging {
+				events "passed", "failed"
+				showExceptions true
+				exceptionFormat "short"
+
+				debug {
+					events "started", "passed", "failed", "skipped", "standardOut"
+					exceptionFormat "full"
+					showCauses true
+					showStackTraces true
+				}
+			}
+		}
+
+	}
+}

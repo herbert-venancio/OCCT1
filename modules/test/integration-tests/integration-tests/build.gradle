@@ -1,0 +1,37 @@
+dependencies {
+	testIntegrationCompile group: "com.liferay", name: "com.liferay.arquillian.extension.junit.bridge", version: "1.0.7"
+	testIntegrationCompile group: "com.liferay", name: "com.liferay.dynamic.data.lists.api", version: "2.1.7"
+	testIntegrationCompile group: "com.liferay", name: "com.liferay.dynamic.data.lists.form.web", version: "1.0.10"
+	testIntegrationCompile group: "com.liferay", name: "com.liferay.osgi.util", version: "3.0.0"
+	testIntegrationCompile group: "com.liferay", name: "com.liferay.portal.configuration.metatype", version: "2.0.0"
+	testIntegrationCompile group: "com.liferay.portal", name: "com.liferay.portal.impl", version: "2.27.2"
+	testIntegrationCompile group: "com.liferay.portal", name: "com.liferay.portal.kernel", version: "default"
+	testIntegrationCompile group: "org.springframework", name: "spring-core", version: "4.2.5.RELEASE"
+
+	testIntegrationRuntime group: "com.liferay", name: "com.liferay.petra.concurrent", version: "1.1.2"
+	testIntegrationRuntime group: "com.liferay", name: "com.liferay.petra.lang", version: "1.1.0"
+	testIntegrationRuntime group: "com.liferay", name: "com.liferay.petra.memory", version: "1.0.1"
+}
+
+tasks.withType(Test) {
+	testLogging {
+		events "passed", "skipped", "failed"
+		showExceptions true
+		exceptionFormat "short"
+		showCauses true
+		showStackTraces true
+
+		afterSuite { desc, result ->
+			if (!desc.parent) {
+				def output = "Results: ${result.resultType} (${result.testCount} tests, ${result.successfulTestCount} successes, ${result.failedTestCount} failures, ${result.skippedTestCount} skipped)"
+				def startItem = '|  ', endItem = '  |'
+				def repeatLength = startItem.length() + output.length() + endItem.length()
+				println('\n' + ('-' * repeatLength) + '\n' + startItem + output + endItem + '\n' + ('-' * repeatLength))
+			}
+		}
+	}
+}
+
+tasks.withType(Test) {
+	reports.html.destination = file("${reporting.baseDir}/${name}")
+}
